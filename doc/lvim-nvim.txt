@@ -1,0 +1,57 @@
+*lvim-nvim.txt*                    The umbrella distribution of the lvim-tech set
+
+==============================================================================
+CONTENTS                                                    *lvim-nvim-contents*
+
+    1. Introduction ......................... |lvim-nvim-introduction|
+    2. Install .............................. |lvim-nvim-install|
+    3. Configure ............................ |lvim-nvim-configure|
+
+==============================================================================
+1. INTRODUCTION                                         *lvim-nvim-introduction*
+
+lvim-nvim bundles every lvim-tech Neovim plugin into one repository, while each
+plugin remains installable on its own. This repository is the single source of
+truth (a monorepo); every bundled plugin is also published as its own standalone
+repository (a generated mirror). All plugins share one merged `lua/` tree, so the
+`require(...)` paths are identical whether the whole set or a single plugin is
+installed.
+
+Status: work in progress — the monorepo is being assembled.
+
+==============================================================================
+2. INSTALL                                                   *lvim-nvim-install*
+
+Requires Neovim >= 0.12.x — the bundled lvim-installer and lvim-pkg use Neovim's
+native `vim.pack`.
+
+lvim-installer (recommended) — open the Plugins tab and install / update / pin it: >vim
+    :LvimInstaller plugins
+<
+Native (vim.pack): >lua
+    vim.pack.add({ { src = "https://github.com/lvim-tech/lvim-nvim" } })
+    require("lvim-nvim").setup({})
+<
+Or install a single plugin standalone and its lvim-tech dependencies — the require()
+paths are the same as in the umbrella, e.g. lvim-ui (which needs lvim-utils): >lua
+    vim.pack.add({
+        { src = "https://github.com/lvim-tech/lvim-utils" },
+        { src = "https://github.com/lvim-tech/lvim-ui" },
+    })
+<
+==============================================================================
+3. CONFIGURE                                               *lvim-nvim-configure*
+
+                                                            *lvim-nvim.setup()*
+require("lvim-nvim").setup({opts})
+
+One entry point configures the set; each `opts.<plugin>` is forwarded to that
+plugin's own setup(). setup() is a thin, lazy orchestrator — plugins activate on
+their real trigger, so startup stays fast. >lua
+    require("lvim-nvim").setup({
+        utils = {},
+        ui = {},
+        picker = {},
+    })
+<
+vim:tw=78:ts=8:ft=help:norl:
