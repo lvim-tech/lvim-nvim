@@ -51,21 +51,27 @@ One entry point configures the set; each `opts.<plugin>` is forwarded to that pl
 
 ```lua
 require("lvim-nvim").setup({
-    utils = {}, -- base: cursor / palette / highlights / store
-    common = {}, -- colorcolumn / gx
-    hud = {}, -- editor periphery: chrome / cmdline / notify / input (false = off)
-    msgarea = {}, -- the bottom message zone
-    picker = {}, -- the fuzzy finders (false = off)
-    ui = {}, -- the float toolkit (usually needs no options)
-    image = {}, -- terminal-graphics images (false = off)
-    dashboard = {}, -- the start dashboard
+    -- Each key is a plugin MODULE NAME; its value is exactly what that plugin's own setup() accepts.
+    ["lvim-utils"] = { cursor = {} }, -- base: cursor / palette / highlights / store
+    ["lvim-common"] = { gx = {}, colorcolumn = {} }, -- colorcolumn / gx
+    ["lvim-hud"] = { chrome = {}, notify = {}, cmdline = {}, input = {} }, -- editor periphery
+    ["lvim-msgarea"] = { enable = true }, -- the bottom message zone
+    ["lvim-picker"] = {}, -- the fuzzy finders
+    ["lvim-image"] = {}, -- terminal-graphics images
+    ["lvim-dashboard"] = { enable = true }, -- the start dashboard
+    -- Feature plugins configure through it too (they each still own their setup()):
+    ["lvim-lsp"] = {},
+    ["lvim-space"] = {},
 })
 ```
 
-`setup()` forwards each `opts.<plugin>` to that plugin's own `setup()` in a dependency-safe order (base →
-common → hud → msgarea → picker → ui → image → dashboard). A key set to `false` opts that plugin out; a
-missing plugin (not installed) is skipped with a warning, so a partial install still boots. Each option table
-is exactly what that plugin's standalone `setup()` accepts — see the plugin's own README.
+`setup()` is a **generic forwarder**: for each `["<plugin>"] = opts` it calls `require("<plugin>").setup(opts)`,
+in a dependency-safe order (the base modules first — utils → common → hud → msgarea → picker → ui → image →
+dashboard — then every other key). It configures ANY lvim-tech plugin, module or feature; each plugin still
+owns its own `setup()`, so **standalone use is identical** — install just one plugin and call its
+`require("<plugin>").setup()` directly. A value of `true` (or `{}`) uses the plugin's defaults; `false` or a
+missing key skips it; a plugin that is not installed is skipped with a warning, so a partial install still
+boots.
 
 ## License
 
