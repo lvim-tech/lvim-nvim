@@ -51,14 +51,21 @@ One entry point configures the set; each `opts.<plugin>` is forwarded to that pl
 
 ```lua
 require("lvim-nvim").setup({
-    utils = {},
-    ui = {},
-    picker = {},
-    -- … per-plugin option tables
+    utils = {}, -- base: cursor / palette / highlights / store
+    common = {}, -- colorcolumn / gx
+    hud = {}, -- editor periphery: chrome / cmdline / notify / input (false = off)
+    msgarea = {}, -- the bottom message zone
+    picker = {}, -- the fuzzy finders (false = off)
+    ui = {}, -- the float toolkit (usually needs no options)
+    image = {}, -- terminal-graphics images (false = off)
+    dashboard = {}, -- the start dashboard
 })
 ```
 
-`setup()` is a thin, lazy orchestrator — plugins activate on their real trigger, so startup stays fast.
+`setup()` forwards each `opts.<plugin>` to that plugin's own `setup()` in a dependency-safe order (base →
+common → hud → msgarea → picker → ui → image → dashboard). A key set to `false` opts that plugin out; a
+missing plugin (not installed) is skipped with a warning, so a partial install still boots. Each option table
+is exactly what that plugin's standalone `setup()` accepts — see the plugin's own README.
 
 ## License
 
