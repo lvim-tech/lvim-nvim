@@ -61,13 +61,24 @@ function M.setup(opts)
         end
         local ok, plugin = pcall(require, name)
         if not ok then
+            local msg = tostring(plugin)
+            if not msg:match("module '" .. vim.pesc(name) .. "' not found") then
+                vim.schedule(function()
+                    vim.notify("lvim-nvim: failed to load " .. name .. ": " .. msg, vim.log.levels.ERROR)
+                end)
+                return
+            end
             vim.schedule(function()
                 vim.notify("lvim-nvim: " .. name .. " is not installed — skipped", vim.log.levels.WARN)
             end)
             return
         end
-        if type(plugin.setup) == "function" then
+        if type(plugin) == "table" and type(plugin.setup) == "function" then
             plugin.setup(o == true and {} or o)
+        else
+            vim.schedule(function()
+                vim.notify("lvim-nvim: " .. name .. " has no setup() — options ignored", vim.log.levels.WARN)
+            end)
         end
     end
 
