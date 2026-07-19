@@ -6,34 +6,51 @@ CONTENTS                                                    *lvim-nvim-contents*
     1. Introduction ......................... |lvim-nvim-introduction|
     2. Install .............................. |lvim-nvim-install|
     3. Configure ............................ |lvim-nvim-configure|
+    4. Health ............................... |lvim-nvim-health|
 
 ==============================================================================
 1. INTRODUCTION                                         *lvim-nvim-introduction*
 
-lvim-nvim bundles every lvim-tech Neovim plugin into one repository, while each
-plugin remains installable on its own. This repository is the single source of
-truth (a monorepo); every bundled plugin is also published as its own standalone
-repository (a generated mirror). All plugins share one merged `lua/` tree, so the
-`require(...)` paths are identical whether the whole set or a single plugin is
-installed.
+lvim-nvim is a THIN UMBRELLA for the lvim-tech Neovim plugin set: it ships a
+generic `setup()` forwarder (|lvim-nvim-configure|) plus a DISTRIBUTION MANIFEST
+(`lua/lvim-nvim/pack.lua`) that lists every lvim-tech plugin's own repository.
 
-Status: work in progress — the monorepo is being assembled.
+The set is distributed as those individual repos. Installing lvim-nvim through
+lvim-installer / lvim-pkg reads the manifest and pulls them all; the `require(...)`
+paths are identical to installing a plugin standalone, so the config is the same
+either way.
+
+Status: work in progress. A single merged-tree mirror (install lvim-nvim alone
+and get every module in one `lua/` tree) is planned but not yet published — until
+then the whole set arrives via the manifest, as below.
 
 ==============================================================================
 2. INSTALL                                                   *lvim-nvim-install*
 
-Requires Neovim >= 0.12.x — the bundled lvim-installer and lvim-pkg use Neovim's
-native `vim.pack`.
+Requires Neovim >= 0.12.x — lvim-installer and lvim-pkg use Neovim's native
+`vim.pack`.
 
-lvim-installer (recommended) — open the Plugins tab and install / update / pin it: >vim
+lvim-installer / lvim-pkg (recommended) — the whole set. Open the Plugins tab and
+install / update / pin it: >vim
     :LvimInstaller plugins
 <
-Native (vim.pack): >lua
-    vim.pack.add({ { src = "https://github.com/lvim-tech/lvim-nvim" } })
+lvim-installer / lvim-pkg EXPAND the manifest automatically: pack.lua lists every
+lvim-tech repo and the bundle pass clones them all.
+
+Native (vim.pack) — bare `vim.pack.add` does NOT read pack.lua (only lvim-pkg's
+bundle pass does), so list the repos you want yourself; lvim-nvim then just
+provides the setup() forwarder: >lua
+    vim.pack.add({
+        { src = "https://github.com/lvim-tech/lvim-nvim" },
+        { src = "https://github.com/lvim-tech/lvim-utils" }, -- base
+        { src = "https://github.com/lvim-tech/lvim-ui" },
+        { src = "https://github.com/lvim-tech/lvim-picker" },
+        -- …the full set is listed in lua/lvim-nvim/pack.lua
+    })
     require("lvim-nvim").setup({})
 <
-Or install a single plugin standalone and its lvim-tech dependencies — the require()
-paths are the same as in the umbrella, e.g. lvim-ui (which needs lvim-utils): >lua
+Or install a single plugin standalone and its lvim-tech dependencies — the
+require() paths are the same as in the umbrella, e.g. lvim-ui (needs lvim-utils): >lua
     vim.pack.add({
         { src = "https://github.com/lvim-tech/lvim-utils" },
         { src = "https://github.com/lvim-tech/lvim-ui" },
@@ -45,13 +62,26 @@ paths are the same as in the umbrella, e.g. lvim-ui (which needs lvim-utils): >l
                                                             *lvim-nvim.setup()*
 require("lvim-nvim").setup({opts})
 
-One entry point configures the set; each `opts.<plugin>` is forwarded to that
-plugin's own setup(). setup() is a thin, lazy orchestrator — plugins activate on
-their real trigger, so startup stays fast. >lua
+One entry point configures the set. Each KEY is a plugin MODULE NAME and its value
+is exactly what that plugin's own setup() accepts; the forwarder calls
+`require("<plugin>").setup(value)` in a dependency-safe order (the base modules
+first — utils → common → hud → msgarea → picker → ui → image → dashboard — then
+every other key). A value of `true` (or `{}`) uses the plugin defaults; `false` or
+a missing key skips it; a plugin that is not installed is skipped with a warning. >lua
     require("lvim-nvim").setup({
-        utils = {},
-        ui = {},
-        picker = {},
+        ["lvim-utils"] = { cursor = {} },
+        ["lvim-hud"] = { chrome = {}, notify = {} },
+        ["lvim-picker"] = {},
+        ["lvim-lsp"] = {}, -- feature plugins work too
     })
 <
+==============================================================================
+4. HEALTH                                                     *lvim-nvim-health*
+
+                                                            *:checkhealth-lvim-nvim*
+`:checkhealth lvim-nvim` reports the Neovim version, whether lvim-pkg (which
+consumes the manifest) is present, and — for every plugin in pack.lua — whether it
+is INSTALLED (on the runtimepath) and LOADED (`package.loaded`), naming any that
+are missing. Run it to see which of the set is actually present and booted.
+
 vim:tw=78:ts=8:ft=help:norl:

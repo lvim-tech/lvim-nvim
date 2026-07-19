@@ -3,32 +3,44 @@
 The umbrella distribution of the **lvim-tech** Neovim plugin set — one repository that bundles every
 lvim-tech plugin, while **each plugin remains installable on its own**.
 
-This repository is the **single source of truth** (a monorepo); every bundled plugin is also published as
-its own standalone repository (a generated mirror). Because all plugins share one merged `lua/` tree, the
-`require(...)` paths are identical whether you install the whole set or a single plugin — your config does
-not change.
+lvim-nvim is a **thin umbrella**: it ships a generic `setup()` forwarder (below) plus a **distribution
+manifest** (`lua/lvim-nvim/pack.lua`) listing every lvim-tech plugin's own repository. The set is distributed
+as those individual repos — installing lvim-nvim through **lvim-installer / lvim-pkg** reads the manifest and
+pulls them all; the `require(...)` paths are identical to installing a plugin standalone, so your config does
+not change either way.
 
-> Status: **work in progress** — the monorepo is being assembled.
+> Status: **work in progress**. A single merged-tree mirror (install lvim-nvim alone and get every module in
+> one `lua/` tree) is planned but not yet published — until then the whole set arrives via the manifest, as
+> described below.
 
 ## Installation
 
 Requires **Neovim >= 0.12.x** — the bundled lvim-installer and lvim-pkg use Neovim's native `vim.pack`.
 
-### lvim-installer (recommended)
+### lvim-installer / lvim-pkg — the whole set (recommended)
 
-Install and manage it from the LVIM package manager — open the **Plugins** tab and install / update / pin it:
+Install lvim-nvim from the LVIM package manager — open the **Plugins** tab and install / update / pin it:
 
 ```vim
 :LvimInstaller plugins
 ```
 
-lvim-installer installs plugins through Neovim's built-in `vim.pack`, so no external plugin manager is needed.
+lvim-installer / lvim-pkg install through Neovim's built-in `vim.pack` and **expand the distribution manifest
+automatically**: `lua/lvim-nvim/pack.lua` lists every lvim-tech repo, and the bundle pass clones them all. No
+external plugin manager is needed. This is the path that yields the whole set from a single install.
 
-### Native (vim.pack)
+### Native (vim.pack) — list the repos explicitly
+
+Bare `vim.pack.add` does **not** read `pack.lua` (only lvim-pkg's bundle pass does), so under plain native
+`vim.pack` you list the plugin repos you want yourself. lvim-nvim then just provides the `setup()` forwarder:
 
 ```lua
 vim.pack.add({
     { src = "https://github.com/lvim-tech/lvim-nvim" },
+    { src = "https://github.com/lvim-tech/lvim-utils" }, -- base (required by everything)
+    { src = "https://github.com/lvim-tech/lvim-ui" },
+    { src = "https://github.com/lvim-tech/lvim-picker" },
+    -- …add the other lvim-tech repos you want; the full set is listed in lua/lvim-nvim/pack.lua
 })
 require("lvim-nvim").setup({})
 ```
