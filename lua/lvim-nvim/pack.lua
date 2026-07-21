@@ -56,6 +56,7 @@ return {
         "lvim-tech/lvim-jump",
         "lvim-tech/lvim-keyring",
         "lvim-tech/lvim-keys-helper",
+        "lvim-tech/lvim-lang",
         "lvim-tech/lvim-linguistics",
         "lvim-tech/lvim-move",
         "lvim-tech/lvim-pairs",
