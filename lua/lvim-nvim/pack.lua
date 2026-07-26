@@ -72,6 +72,7 @@ return {
         "lvim-tech/lvim-tasks",
         "lvim-tech/lvim-term",
         "lvim-tech/lvim-test",
+        "lvim-tech/lvim-tex",
         "lvim-tech/lvim-undo",
         "lvim-tech/lvim-vault",
         "lvim-tech/lvim-winmove",
