@@ -1,5 +1,5 @@
 -- lvim-nvim.pack: the DISTRIBUTION manifest of the lvim-tech set — the single source of truth for WHICH
--- plugins make up the umbrella. Read by lvim-pkg.deps (via the host loader's `deps.bundle` pass) so that
+-- plugins make up the umbrella. Read by lvim-pack.deps (the loader's `deps.bundle` pass) so that
 -- installing lvim-nvim pulls the whole set automatically.
 --
 -- These are INSTALL-only entries: each plugin is registered so the package manager clones it, but it is NOT
