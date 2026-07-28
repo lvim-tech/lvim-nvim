@@ -59,12 +59,11 @@ function M.setup(opts)
         if o == nil or o == false then
             return -- not configured / explicitly disabled
         end
-        -- ON THE RUNTIMEPATH FIRST. These are children this umbrella CONFIGURES but does not
-        -- declare as dependencies (the manifest installs them; each still loads on its own spec),
-        -- so at this moment one of them may be installed and not yet `packadd`-ed — and `require`
-        -- answers "not found" for a plugin sitting right there on disk. packadd is idempotent, and
-        -- a no-op for a local checkout, which is already on the path.
-        pcall(vim.cmd.packadd, name)
+        -- NO `packadd` HERE, DELIBERATELY. A plugin that reaches for the package manager assumes
+        -- how it was installed (an `opt` package, in one particular pack dir) and overrides the
+        -- lazy rules its reader set. Whatever this umbrella CONFIGURES, the host declares as its
+        -- dependency — that is a fact about the umbrella, and the loader is what guarantees order.
+        -- A plugin that is genuinely absent is still reported below, which is the honest outcome.
         local ok, plugin = pcall(require, name)
         if not ok then
             local msg = tostring(plugin)
