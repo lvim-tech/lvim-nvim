@@ -18,12 +18,15 @@ local function modname(dep)
     return dep:match("([^/]+)$") or dep
 end
 
---- Whether a plugin is on the runtimepath (its `lua/<name>/init.lua` or `lua/<name>.lua` resolves).
+--- Whether a plugin is on the runtimepath: its `lua/<name>/init.lua` or `lua/<name>.lua` resolves, or its
+--- `lua/<name>/` module tree does — a plugin that is only ever reached through its submodules (lvim-ls, the
+--- engine lvim-lsp drives) ships no root module, and it was reported as NOT installed for that alone.
 ---@param name string
 ---@return boolean
 local function installed(name)
     return #vim.api.nvim_get_runtime_file("lua/" .. name .. "/init.lua", false) > 0
         or #vim.api.nvim_get_runtime_file("lua/" .. name .. ".lua", false) > 0
+        or #vim.api.nvim_get_runtime_file("lua/" .. name, false) > 0
 end
 
 --- Run the health checks.
