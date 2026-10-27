@@ -41,22 +41,16 @@ local function siblings()
     return n > 1 and out or nil
 end
 
--- Plugins present in the tree and deliberately NOT distributed today. Pinning them here is what
--- makes the reconciliation useful: a NEW plugin that goes unlisted fails the case below, while
--- these four stay a decision somebody made rather than a drift nobody noticed.
+-- Plugins present in the tree and deliberately NOT distributed. Pinning them here is what makes
+-- the reconciliation useful: a NEW plugin that goes unlisted fails the case below, while these two
+-- stay a decision somebody made rather than a drift nobody noticed.
 --
---   lvim-gtk     — the standing audit rule excludes it (it is not a Neovim plugin).
---   lvim-pack    — the loader that READS this manifest; it has to be installed before it can
---                  bundle anything, so listing it would be circular.
---   lvim-ansi    — published, and a candidate: see the note in the suite's own commit.
---   lvim-render  — published, and a candidate.
---   lvim-search  — published, and a candidate.
+--   lvim-gtk   — the standing audit rule excludes it (it is not a Neovim plugin).
+--   lvim-pack  — the loader that READS this manifest; it has to be installed before it can bundle
+--                anything, so listing it would be circular.
 local NOT_DISTRIBUTED = {
     ["lvim-gtk"] = true,
     ["lvim-pack"] = true,
-    ["lvim-ansi"] = true,
-    ["lvim-render"] = true,
-    ["lvim-search"] = true,
 }
 
 describe("lvim-nvim: the distribution manifest")

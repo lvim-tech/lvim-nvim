@@ -36,6 +36,7 @@ return {
         "lvim-tech/lvim-dap",
         "lvim-tech/lvim-dap-view",
         -- feature plugins (alphabetical)
+        "lvim-tech/lvim-ansi",
         "lvim-tech/lvim-breadcrumbs",
         "lvim-tech/lvim-buf-history",
         "lvim-tech/lvim-build",
@@ -63,8 +64,10 @@ return {
         "lvim-tech/lvim-preview",
         "lvim-tech/lvim-qf-loc",
         "lvim-tech/lvim-remote",
+        "lvim-tech/lvim-render",
         "lvim-tech/lvim-replace",
         "lvim-tech/lvim-rest",
+        "lvim-tech/lvim-search",
         "lvim-tech/lvim-shell",
         "lvim-tech/lvim-snippets",
         "lvim-tech/lvim-space",
