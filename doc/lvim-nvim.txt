@@ -44,7 +44,7 @@ provides the setup() forwarder: >lua
         { src = "https://github.com/lvim-tech/lvim-nvim" },
         { src = "https://github.com/lvim-tech/lvim-utils" }, -- base
         { src = "https://github.com/lvim-tech/lvim-ui" },
-        { src = "https://github.com/lvim-tech/lvim-picker" },
+        { src = "https://github.com/lvim-tech/lvim-fuzzy-picker" },
         -- …the full set is listed in lua/lvim-nvim/pack.lua
     })
     require("lvim-nvim").setup({})

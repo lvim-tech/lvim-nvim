@@ -11,11 +11,13 @@ local pack = require("lvim-nvim.pack")
 
 local M = {}
 
---- The plugin MODULE name from a manifest entry ("lvim-tech/lvim-picker" → "lvim-picker").
+--- The plugin MODULE name from a manifest entry ("lvim-tech/lvim-ui" → "lvim-ui"; "lvim-tech/lvim-fuzzy-picker" →
+--- "lvim-picker").
 ---@param dep string
 ---@return string
 local function modname(dep)
-    return dep:match("([^/]+)$") or dep
+    local repo = dep:match("([^/]+)$") or dep
+    return pack.modules[repo] or repo
 end
 
 --- Whether a plugin is on the runtimepath: its `lua/<name>/init.lua` or `lua/<name>.lua` resolves, or its

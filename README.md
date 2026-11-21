@@ -39,7 +39,7 @@ vim.pack.add({
     { src = "https://github.com/lvim-tech/lvim-nvim" },
     { src = "https://github.com/lvim-tech/lvim-utils" }, -- base (required by everything)
     { src = "https://github.com/lvim-tech/lvim-ui" },
-    { src = "https://github.com/lvim-tech/lvim-picker" },
+    { src = "https://github.com/lvim-tech/lvim-fuzzy-picker" },
     -- …add the other lvim-tech repos you want; the full set is listed in lua/lvim-nvim/pack.lua
 })
 require("lvim-nvim").setup({})

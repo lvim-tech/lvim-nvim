@@ -15,6 +15,12 @@
 ---@module "lvim-nvim.pack"
 
 return {
+    -- Repos whose Lua MODULE is not named like the repo: they carry the `lvim-fuzzy-*` family prefix, the module kept
+    -- its name (`require("lvim-picker")`, `require("lvim-fuzzy")`) so configs and other plugins did not change.
+    modules = {
+        ["lvim-fuzzy-picker"] = "lvim-picker",
+        ["lvim-fuzzy-nvim"] = "lvim-fuzzy",
+    },
     dependencies = {
         -- base + the split UI modules (these also have a fixed setup ORDER in init.lua)
         "lvim-tech/lvim-utils",
@@ -22,8 +28,8 @@ return {
         "lvim-tech/lvim-common",
         "lvim-tech/lvim-hud",
         "lvim-tech/lvim-msgarea",
-        "lvim-tech/lvim-picker",
-        "lvim-tech/lvim-fuzzy",
+        "lvim-tech/lvim-fuzzy-picker",
+        "lvim-tech/lvim-fuzzy-nvim",
         "lvim-tech/lvim-icons",
         "lvim-tech/lvim-image",
         "lvim-tech/lvim-dashboard",

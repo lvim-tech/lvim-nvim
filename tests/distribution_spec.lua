@@ -19,6 +19,7 @@ local function listed()
     local names, duplicates = {}, {}
     for _, repo in ipairs(manifest.dependencies) do
         local name = repo:match("([^/]+)$")
+        name = manifest.modules[name] or name -- a repo whose module has another name (lvim-fuzzy-picker -> lvim-picker)
         if names[name] then
             duplicates[#duplicates + 1] = name
         end
@@ -48,9 +49,17 @@ end
 --   lvim-gtk   — the standing audit rule excludes it (it is not a Neovim plugin).
 --   lvim-pack  — the loader that READS this manifest; it has to be installed before it can bundle
 --                anything, so listing it would be circular.
+--   lvim-fuzzy-{cli,commander,core,plugin,plugin-preview,ui} — Rust crates and programs (lfz, lvim-fuzzy-commander and
+--                what they are made of), not Neovim plugins: nothing for a plugin manager to put on the runtimepath.
 local NOT_DISTRIBUTED = {
     ["lvim-gtk"] = true,
     ["lvim-pack"] = true,
+    ["lvim-fuzzy-cli"] = true,
+    ["lvim-fuzzy-commander"] = true,
+    ["lvim-fuzzy-core"] = true,
+    ["lvim-fuzzy-plugin"] = true,
+    ["lvim-fuzzy-plugin-preview"] = true,
+    ["lvim-fuzzy-ui"] = true,
 }
 
 describe("lvim-nvim: the distribution manifest")
@@ -78,8 +87,18 @@ it("every distributed plugin exists in the tree", function()
         skip("reconciling the manifest with the tree", "the sibling checkouts are not beside this one")
         return
     end
+    for repo in pairs(manifest.modules) do
+        truthy(tree[repo], repo .. " is distributed but is not in the source tree -- the bundle would clone it")
+    end
     for name in pairs((listed())) do
-        truthy(tree[name], name .. " is distributed but is not in the source tree -- the bundle would clone it")
+        -- the tree is by REPO name; a module renamed away from its repo is checked above
+        local repo = name
+        for r, m in pairs(manifest.modules) do
+            if m == name then
+                repo = r
+            end
+        end
+        truthy(tree[repo], repo .. " is distributed but is not in the source tree -- the bundle would clone it")
     end
 end)
 
@@ -90,6 +109,9 @@ it("every plugin in the tree is distributed, or explicitly not", function()
         return
     end
     local names = listed()
+    for repo, mod in pairs(manifest.modules) do
+        names[repo] = names[mod] -- the tree is by repo name
+    end
     local unlisted = {}
     for name in pairs(tree) do
         if name ~= "lvim-nvim" and not names[name] and not NOT_DISTRIBUTED[name] then
