@@ -49,7 +49,7 @@ end
 --   lvim-gtk   — the standing audit rule excludes it (it is not a Neovim plugin).
 --   lvim-pack  — the loader that READS this manifest; it has to be installed before it can bundle
 --                anything, so listing it would be circular.
---   lvim-fuzzy-{cli,commander,core,plugin,plugin-preview,ui} — Rust crates and programs (lfz, lvim-fuzzy-commander and
+--   lvim-fuzzy-{cli,commander,core,plugin,plugin-preview,plugin-open,ui} — Rust crates and programs (lfz, lvim-fuzzy-commander and
 --                what they are made of), not Neovim plugins: nothing for a plugin manager to put on the runtimepath.
 local NOT_DISTRIBUTED = {
     ["lvim-gtk"] = true,
@@ -59,6 +59,7 @@ local NOT_DISTRIBUTED = {
     ["lvim-fuzzy-core"] = true,
     ["lvim-fuzzy-plugin"] = true,
     ["lvim-fuzzy-plugin-preview"] = true,
+    ["lvim-fuzzy-plugin-open"] = true,
     ["lvim-fuzzy-ui"] = true,
 }
 
